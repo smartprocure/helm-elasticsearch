@@ -85,6 +85,10 @@ data:
     NODE_INGEST: "false"
     HTTP_ENABLE: "false"
 
+  # Set to true to skip persistent volume claim below and instead
+  # use local SSD for storing data. (only 1 local SSD per server)
+  # Make sure antiAffinity is set to hard as well above.
+  useLocalSSD: true
   # Determines the properties of the persistent volume claim associated with a
   # data node StatefulSet that is created when the common.stateful.enabled
   # attribute is true.

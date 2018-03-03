@@ -97,7 +97,13 @@ spec:
         volumeMounts:
         - name: storage
           mountPath: /data
-      {{- if not .Values.common.stateful.enabled }}
+      {{- if .Values.data.useLocalSSD }}
+      volumes:
+        - hostPath:
+            path: /mnt/disks/ssd0
+            type: ""
+          name: "storage"
+      {{- else if not .Values.common.stateful.enabled }}
       volumes:
         - emptyDir:
             medium: ""
@@ -108,6 +114,7 @@ spec:
         cloud.google.com/gke-nodepool: {{ .Values.common.nodepool }}
       {{- end }}
   {{- if .Values.common.stateful.enabled }}
+  {{- if not .Values.data.useLocalSSD }}
   volumeClaimTemplates:
   - metadata:
       name: storage
@@ -118,4 +125,5 @@ spec:
       resources:
         requests:
           storage: {{ .Values.data.stateful.size }}
+  {{- end }}
   {{- end }}
