@@ -27,4 +27,8 @@ spec:
               configMap:
                 name: {{ template "fullname" . }}-curator-config
           restartPolicy: OnFailure
+          {{- if .Values.common.nodepool }}
+          nodeSelector:
+            cloud.google.com/gke-nodepool: {{ .Values.common.nodepool }}
+          {{- end }}
 {{- end }}

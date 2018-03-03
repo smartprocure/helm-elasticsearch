@@ -101,3 +101,7 @@ spec:
           - emptyDir:
               medium: ""
             name: "storage"
+      {{- if .Values.common.nodepool }}
+      nodeSelector:
+        cloud.google.com/gke-nodepool: {{ .Values.common.nodepool }}
+      {{- end }}

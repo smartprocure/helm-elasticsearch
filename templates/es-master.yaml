@@ -101,6 +101,10 @@ spec:
             medium: ""
           name: "storage"
       {{- end }}
+      {{- if .Values.common.nodepool }}
+      nodeSelector:
+        cloud.google.com/gke-nodepool: {{ .Values.common.nodepool }}
+      {{- end }}
   {{- if .Values.common.stateful.enabled }}
   volumeClaimTemplates:
   - metadata:
