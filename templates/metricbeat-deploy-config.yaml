@@ -10,17 +10,34 @@ metadata:
     heritage: "{{ .Release.Service }}"
     kubernetes.io/cluster-service: "true"
 data:
-  # This module requires `kube-state-metrics` up and running under `kube-system` namespace
-  kubernetes.yml: |-
-    - module: kubernetes
-      metricsets:
-        - state_node
-        - state_deployment
-        - state_replicaset
-        - state_pod
-        - state_container
-        # Uncomment this to get k8s events:
-        #- event
-      period: 10s
-      hosts: ["kube-state-metrics.kube-system.svc.cluster.local:8080"]
+  metricbeat.yml: |-
+    name: ${NODE_NAME}
+    
+    flush:
+      min_events: 100
+      timeout: 10s
+
+    metricbeat.modules:
+      - module: kubernetes
+        metricsets:
+          - state_node
+          - state_deployment
+          - state_replicaset
+          - state_pod
+          - state_container
+          # Uncomment this to get k8s events:
+          #- event
+        period: 10s
+        hosts: ["kube-state-metrics.kube-system.svc.cluster.local:8080"]
+
+    processors:
+      - add_cloud_metadata:
+
+    output.elasticsearch:
+      hosts: ['http://{{ $elasticsearchServiceName }}:{{ .Values.service.httpPort }}']
+    
+    {{- if .Values.kibana.enabled }}      
+    setup.kibana.host: "http://{{ $kibanaServiceName }}:{{ .Values.kibana.httpPort }}"
+    setup.dashboards.enabled: {{ .Values.metricbeat.setupDashboards }}
+    {{- end }}
 {{- end }}

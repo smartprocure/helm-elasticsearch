@@ -10,40 +10,58 @@ metadata:
     heritage: "{{ .Release.Service }}"
     kubernetes.io/cluster-service: "true"
 data:
-  system.yml: |-
-    - module: system
-      period: 10s
-      metricsets:
-        - cpu
-        - load
-        - memory
-        - network
-        - process
-        - process_summary
-        #- core
-        #- diskio
-        #- socket
-      processes: ['.*']
-      process.include_top_n:
-        by_cpu: 5      # include top 5 processes by CPU
-        by_memory: 5   # include top 5 processes by memory
+  metricbeat.yml: |-
+    name: ${NODE_NAME}
+    
+    flush:
+      min_events: 100
+      timeout: 10s
 
-    - module: system
-      period: 1m
-      metricsets:
-        - filesystem
-        - fsstat
-      processors:
-      - drop_event.when.regexp:
-          system.filesystem.mount_point: '^/(sys|cgroup|proc|dev|etc|host|lib)($|/)'
-  kubernetes.yml: |-
-    - module: kubernetes
-      metricsets:
-        - node
-        - system
-        - pod
-        - container
-        - volume
-      period: 10s
-      hosts: ["${NODE_NAME}:10255"]
+    metricbeat.modules:
+      - module: system
+        period: 10s
+        metricsets:
+          - cpu
+          - load
+          - memory
+          - network
+          - process
+          - process_summary
+          #- core
+          #- diskio
+          #- socket
+        processes: ['.*']
+        process.include_top_n:
+          by_cpu: 5      # include top 5 processes by CPU
+          by_memory: 5   # include top 5 processes by memory
+
+      - module: system
+        period: 1m
+        metricsets:
+          - filesystem
+          - fsstat
+        processors:
+        - drop_event.when.regexp:
+            system.filesystem.mount_point: '^/(sys|cgroup|proc|dev|etc|host|lib)($|/)'
+
+      - module: kubernetes
+        metricsets:
+          - node
+          - system
+          - pod
+          - container
+          - volume
+        period: 10s
+        hosts: ["${NODE_NAME}:10255"]
+
+    processors:
+      - add_cloud_metadata:
+
+    output.elasticsearch:
+      hosts: ['http://{{ $elasticsearchServiceName }}:{{ .Values.service.httpPort }}']
+    
+    {{- if .Values.kibana.enabled }}      
+    setup.kibana.host: "http://{{ $kibanaServiceName }}:{{ .Values.kibana.httpPort }}"
+    setup.dashboards.enabled: {{ .Values.metricbeat.setupDashboards }}
+    {{- end }}
 {{- end }}

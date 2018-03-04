@@ -45,16 +45,9 @@ spec:
           mountPath: /etc/metricbeat.yml
           readOnly: true
           subPath: metricbeat.yml
-        - name: modules
-          mountPath: /usr/share/metricbeat/modules.d
-          readOnly: true
       volumes:
       - name: config
         configMap:
           defaultMode: 0600
-          name: {{ template "fullname" . }}-metricbeat-config
-      - name: modules
-        configMap:
-          defaultMode: 0600
-          name: {{ template "fullname" . }}-metricbeat-deployment-modules
+          name: {{ template "fullname" . }}-metricbeat-deployment-config
 {{- end }}
