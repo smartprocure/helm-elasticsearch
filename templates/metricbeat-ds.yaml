@@ -25,6 +25,7 @@ spec:
       containers:
       - name: metricbeat
         image: "{{ .Values.metricbeat.image.repository }}:{{ .Values.metricbeat.image.tag }}"
+        imagePullPolicy: {{ .Values.metricbeat.image.pullPolicy }}
         args: [
           "-c", "/etc/metricbeat.yml",
           "-e",
