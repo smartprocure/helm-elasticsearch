@@ -1,0 +1,26 @@
+{{- if .Values.metricbeat.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "fullname" . }}-metricbeat-deployment-modules
+  labels:
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+    kubernetes.io/cluster-service: "true"
+data:
+  # This module requires `kube-state-metrics` up and running under `kube-system` namespace
+  kubernetes.yml: |-
+    - module: kubernetes
+      metricsets:
+        - state_node
+        - state_deployment
+        - state_replicaset
+        - state_pod
+        - state_container
+        # Uncomment this to get k8s events:
+        #- event
+      period: 10s
+      hosts: ["kube-state-metrics.kube-system.svc.cluster.local:8080"]
+{{- end }}

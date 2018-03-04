@@ -1,0 +1,34 @@
+{{- if .Values.metricbeat.enabled }}
+{{- $elasticsearchServiceName := printf "%s-%s" .Release.Name "elasticsearch" | trunc 63 -}}
+{{- $kibanaServiceName := printf "%s-%s" .Release.Name "elasticsearch-kibana" | trunc 63 -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "fullname" . }}-metricbeat-config
+  labels:
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+    kubernetes.io/cluster-service: "true"
+data:
+  metricbeat.yml: |-
+    name: ${NODE_NAME}
+
+    metricbeat.config.modules:
+      # Mounted `metricbeat-daemonset-modules` configmap:
+      path: ${path.config}/modules.d/*.yml
+      # Reload module configs as they change:
+      reload.enabled: false
+
+    processors:
+      - add_cloud_metadata:
+
+    output.elasticsearch:
+      hosts: ['http://{{ $elasticsearchServiceName }}:{{ .Values.service.httpPort }}']
+    
+    {{- if .Values.kibana.enabled }}      
+    setup.kibana.host: "http://{{ $kibanaServiceName }}:{{ .Values.kibana.httpPort }}"
+    setup.dashboards.enabled: {{ .Values.metricbeat.setupDashboards }}
+    {{- end }}
+{{- end }}
