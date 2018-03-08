@@ -58,6 +58,99 @@ data:
         period: 10s
         hosts: ["${NODE_NAME}:10255"]
 
+    metricbeat.autodiscover:
+      providers:
+        - type: kubernetes
+          templates:
+            - condition:
+                contains:
+                  kubernetes.container.image: docker.elastic.co/elasticsearch/elasticsearch-oss
+              config:
+                - module: elasticsearch
+                  metricsets:
+                    - node
+                    - node_stats
+                  period: 10s
+                  hosts: "${data.host}:9200"
+            - condition:
+                contains:
+                  kubernetes.container.image: us.gcr.io/evident-plane-94217/elasticsearch
+              config:
+                - module: elasticsearch
+                  metricsets:
+                    - node
+                    - node_stats
+                  period: 10s
+                  hosts: "${data.host}:9200"
+            - condition:
+                contains:
+                  kubernetes.container.image: quay.io/pires/docker-elasticsearch-kubernetes
+              config:
+                - module: elasticsearch
+                  metricsets: 
+                    - node
+                    - node_stats
+                  period: 10s
+                  hosts: "${data.host}:9200"
+
+            - condition:
+                contains:
+                  kubernetes.container.image: mongo
+              config:
+                - module: mongodb
+                  metricsets: 
+                    - collstats
+                    - dbstats
+                    - status
+                  period: 10s
+                  hosts: "${data.host}:27017"
+
+            - condition:
+                contains:
+                  kubernetes.container.image: mysql
+              config:
+                - module: mysql
+                  metricsets: 
+                    - status
+                  period: 10s
+                  hosts: "${data.host}:3306"
+                  username: root
+                  password: 6kCGBg4TdUQH3ng2
+
+            - condition:
+                contains:
+                  kubernetes.container.image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller
+              config:
+                - module: nginx
+                  metricsets: 
+                    - stubstatus
+                  period: 10s
+                  hosts: "${data.host}:18080"
+                  
+            - condition:
+                contains:
+                  kubernetes.container.image: redis
+              config:
+                - module: redis
+                  metricsets: 
+                    - info
+                    - keyspace
+                  period: 10s
+                  hosts: "${data.host}:6379"
+
+            - condition:
+                contains:
+                  kubernetes.container.image: rabbitmq
+              config:
+                - module: rabbitmq
+                  metricsets: 
+                    - node
+                    - queue
+                  period: 10s
+                  hosts: "${data.host}:6379"
+                  username: guest
+                  password: guest
+
     processors:
       - add_cloud_metadata:
 
