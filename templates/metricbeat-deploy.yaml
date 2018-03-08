@@ -51,4 +51,8 @@ spec:
         configMap:
           defaultMode: 0600
           name: {{ template "fullname" . }}-metricbeat-deployment-config
+      {{- if .Values.common.nodepool }}
+      nodeSelector:
+        cloud.google.com/gke-nodepool: {{ .Values.common.nodepool }}
+      {{- end }}
 {{- end }}
