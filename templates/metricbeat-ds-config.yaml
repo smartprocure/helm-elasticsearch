@@ -15,9 +15,11 @@ data:
   metricbeat.yml: |-
     name: ${NODE_NAME}
     
-    flush:
-      min_events: 100
-      timeout: 10s
+    queue.mem:
+      events: 4096
+      flush:
+        min_events: 512
+        timeout: 10s
 
     metricbeat.modules:
       - module: system

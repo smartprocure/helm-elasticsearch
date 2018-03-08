@@ -13,6 +13,14 @@ metadata:
     kubernetes.io/cluster-service: "true"
 data:
   filebeat.yml: |-
+    name: ${NODE_NAME}
+    
+    queue.mem:
+      events: 4096
+      flush:
+        min_events: 512
+        timeout: 10s
+
     filebeat.prospectors:
       - type: docker
         containers.ids:
