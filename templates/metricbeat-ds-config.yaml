@@ -1,4 +1,6 @@
 {{- if .Values.metricbeat.enabled }}
+{{- $elasticsearchServiceName := printf "%s-%s" .Release.Name "elasticsearch" | trunc 63 -}}
+{{- $kibanaServiceName := printf "%s-%s" .Release.Name "elasticsearch-kibana" | trunc 63 -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
