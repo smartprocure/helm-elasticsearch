@@ -46,11 +46,11 @@ client:
   # The amount of RAM allocated to the JVM heap. This should be set to the
   # same value as client.resources.requests.memory, or you may see
   # OutOfMemoryErrors on startup.
-  heapMemory: 1g
+  heapMemory: 2g
 
   resources:
     requests:
-      memory: 1Gi
+      memory: 2Gi
 
   env:
     NODE_DATA: "false"
@@ -73,11 +73,11 @@ data:
   # The amount of RAM allocated to the JVM heap. This should be set to the
   # same value as data.resources.requests.memory, or you may see
   # OutOfMemoryErrors on startup.
-  heapMemory: 4g
+  heapMemory: 12g
 
   resources:
     requests:
-      memory: 4Gi
+      memory: 12Gi
 
   env:
     NODE_DATA: "true"
@@ -133,7 +133,7 @@ master:
   stateful:
     # This is a default value, and will not be sufficient in a production
     # system. You'll probably want to increase it.
-    size: 2Gi
+    size: 50Gi
 
 curator:
   enabled: true
