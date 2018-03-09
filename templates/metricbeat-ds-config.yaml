@@ -115,19 +115,21 @@ data:
                   metricsets: 
                     - status
                   period: 10s
-                  hosts: "${data.host}:3306"
+                  hosts: "tcp(${data.host}:3306)/"
                   username: root
                   password: 6kCGBg4TdUQH3ng2
 
-            - condition:
-                contains:
-                  kubernetes.container.image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller
-              config:
-                - module: nginx
-                  metricsets: 
-                    - stubstatus
-                  period: 10s
-                  hosts: "${data.host}:18080"
+            # Unfortunately, http://nginx:80/nginx_status that uses stub_status is only available to 127.0.0.1
+            # - condition:
+            #     contains:
+            #       kubernetes.container.image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller
+            #   config:
+            #     - module: nginx
+            #       metricsets: 
+            #         - stubstatus
+            #       period: 10s
+            #       hosts: "http://${data.host}:80"
+            #       server_status_path: "nginx_status"
                   
             - condition:
                 contains:
