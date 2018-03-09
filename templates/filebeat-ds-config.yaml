@@ -18,10 +18,10 @@ data:
       nodePool: ${POOL_NAME}
     
     queue.mem:
-      events: 4096
+      events: {{ .Values.beats.queue.events }}
       flush:
-        min_events: 512
-        timeout: 10s
+        min_events: {{ .Values.beats.queue.min_events }}
+        timeout: {{ .Values.beats.queue.timeout }}
 
     filebeat.prospectors:
       - type: docker
@@ -36,6 +36,7 @@ data:
 
     output.elasticsearch:
       hosts: ['http://{{ $elasticsearchServiceName }}:{{ .Values.service.httpPort }}']
+      bulk_max_size: {{ .Values.beats.output.max_bulk_size }}
     
     {{- if .Values.kibana.enabled }}      
     setup.kibana.host: "http://{{ $kibanaServiceName }}:{{ .Values.kibana.httpPort }}"

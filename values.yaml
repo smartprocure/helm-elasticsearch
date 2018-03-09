@@ -182,7 +182,15 @@ kibana:
       # - secretName: kibana-tls
       #   hosts:
       #     - kibana.local
-      
+
+beats:
+  queue:
+    events: 4096
+    min_events: 512
+    timeout: 30s
+  output:
+    bulk_max_size: 512
+
 metricbeat:
   enabled: true
   image:
