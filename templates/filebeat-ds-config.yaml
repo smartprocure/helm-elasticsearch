@@ -14,6 +14,8 @@ metadata:
 data:
   filebeat.yml: |-
     name: ${NODE_NAME}
+    fields:
+      nodePool: ${POOL_NAME}
     
     queue.mem:
       events: 4096

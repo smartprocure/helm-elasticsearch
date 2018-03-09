@@ -24,11 +24,11 @@ spec:
       - name: packetbeat
         image: "{{ .Values.packetbeat.image.repository }}:{{ .Values.packetbeat.image.tag }}"
         imagePullPolicy: {{ .Values.packetbeat.image.pullPolicy }}
-        args: [
-          "-c", "/etc/packetbeat.yml",
-          "-e",
-          "-system.hostfs=/hostfs",
-        ]
+        command:
+        - /bin/sh
+        - -c
+        - export POOL_NAME=$(echo $NODE_NAME | sed "s/^gke-main-\(.*\)-.*-.*$/\1/")
+          && /usr/share/packetbeat/packetbeat -e -c /etc/packetbeat.yml -system.hostfs=/hostfs
         env:
         - name: POD_NAMESPACE
           valueFrom:

@@ -24,10 +24,11 @@ spec:
       - name: filebeat
         image: "{{ .Values.filebeat.image.repository }}:{{ .Values.filebeat.image.tag }}"
         imagePullPolicy: {{ .Values.filebeat.image.pullPolicy }}
-        args: [
-          "-c", "/etc/filebeat.yml",
-          "-e",
-        ]
+        command:
+        - /bin/sh
+        - -c
+        - export POOL_NAME=$(echo $NODE_NAME | sed "s/^gke-main-\(.*\)-.*-.*$/\1/")
+          && /usr/share/filebeat/filebeat -e -c /etc/filebeat.yml
         env:
         - name: POD_NAMESPACE
           valueFrom:
