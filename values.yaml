@@ -219,10 +219,10 @@ beats:
   max_start_delay: 20s
   queue:
     events: 4096
-    min_events: 512
-    timeout: 30s
+    min_events: 1024
+    timeout: 10s
   output:
-    bulk_max_size: 512
+    bulk_max_size: 1024
 
 metricbeat:
   enabled: true
