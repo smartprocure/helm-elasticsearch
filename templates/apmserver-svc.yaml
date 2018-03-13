@@ -1,0 +1,20 @@
+{{- if .Values.kibana.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "fullname" . }}-apmserver
+  labels:
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+    component: {{ template "fullname" . }}-apmserver
+spec:
+  type: {{ .Values.common.serviceType }}
+  ports:
+  - port: {{ .Values.apmserver.port }}
+    targetPort: 8200
+    protocol: TCP
+  selector:
+    component: {{ template "fullname" . }}-apmserver
+{{- end }}

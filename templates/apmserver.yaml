@@ -1,0 +1,53 @@
+{{- if .Values.apmserver.enabled }}
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "fullname" . }}-apmserver
+  labels:
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+    component: {{ template "fullname" . }}-apmserver
+spec:
+  replicas: {{ .Values.apmserver.replicas }}
+  selector:
+    matchLabels:
+     component: {{ template "fullname" . }}-apmserver
+  template:
+    metadata:
+      labels:
+        component: {{ template "fullname" . }}-apmserver
+    spec:
+      containers:
+      - name: apmserver
+        image: "{{ .Values.apmserver.image.repository }}:{{ .Values.apmserver.image.tag }}"
+        imagePullPolicy: {{ .Values.apmserver.image.pullPolicy }}
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        securityContext:
+          runAsUser: 0
+        resources:
+{{ toYaml .Values.apmserver.resources | indent 12 }}
+        ports:
+        - containerPort: {{ .Values.apmserver.port }}
+          name: apmserver
+          protocol: TCP
+        volumeMounts:
+        - name: config
+          mountPath: /usr/share/apm-server/apm-server.yml
+          readOnly: true
+          subPath: apm-server.yml
+      volumes:
+      - name: config
+        configMap:
+          defaultMode: 0600
+          name: {{ template "fullname" . }}-apmserver-config
+      {{- if .Values.common.nodepool }}
+      nodeSelector:
+        cloud.google.com/gke-nodepool: {{ .Values.common.nodepool }}
+      {{- end }}
+{{- end }}

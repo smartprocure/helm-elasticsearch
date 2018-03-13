@@ -1,0 +1,38 @@
+{{- $elasticsearchServiceName := printf "%s-%s" .Release.Name "elasticsearch" | trunc 63 -}}
+{{- $logstashServiceName := printf "%s-%s" .Release.Name "elasticsearch-logstash" | trunc 63 -}}
+{{- $redisServiceName := printf "%s-%s" .Release.Name "elasticsearch-redis" | trunc 63 -}}
+{{- $kibanaServiceName := printf "%s-%s" .Release.Name "elasticsearch-kibana" | trunc 63 -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "fullname" . }}-apmserver-config
+  labels:
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+    kubernetes.io/cluster-service: "true"
+data:
+  apm-server.yml: |-
+    apm-server.host: ${POD_IP}:8200
+    logging.metrics.enabled: false
+
+    {{- if .Values.logstash.enabled }}
+    output.logstash:
+      hosts: ['{{ $logstashServiceName }}:{{ .Values.logstash.beatsPort }}']
+      bulk_max_size: {{ .Values.beats.output.max_bulk_size }}
+      slow_start: true
+    {{- else if .Values.redis.enabled }}
+    output.redis:
+      hosts: ['{{ $redisServiceName }}:{{ .Values.redis.port }}']
+      bulk_max_size: {{ .Values.beats.output.max_bulk_size }}
+    {{- else }}
+    output.elasticsearch:
+      hosts: ['http://{{ $elasticsearchServiceName }}:{{ .Values.service.httpPort }}']
+      bulk_max_size: {{ .Values.beats.output.max_bulk_size }}
+    {{- end }}
+    
+    {{- if .Values.kibana.enabled }}      
+    setup.kibana.host: "http://{{ $kibanaServiceName }}:{{ .Values.kibana.httpPort }}"
+    setup.dashboards.enabled: {{ .Values.apmserver.setupDashboards }}
+    {{- end }}

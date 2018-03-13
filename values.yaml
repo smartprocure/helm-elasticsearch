@@ -224,6 +224,21 @@ beats:
   output:
     bulk_max_size: 1024
 
+apmserver:
+  enabled: true
+  replicas: 1
+  image:
+    repository: docker.elastic.co/apm/apm-server
+    tag: 6.2.2
+    pullPolicy: Always
+  resources:
+    limits:
+      cpu: 1000m
+    requests:
+      cpu: 100m
+  port: 8200
+  setupDashboards: true
+
 metricbeat:
   enabled: true
   image:
