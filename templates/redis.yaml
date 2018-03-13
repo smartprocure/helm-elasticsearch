@@ -1,0 +1,36 @@
+{{- if .Values.redis.enabled }}
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "fullname" . }}-redis
+  labels:
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+    component: {{ template "fullname" . }}-redis
+spec:
+  replicas: {{ .Values.redis.replicas }}
+  selector:
+    matchLabels:
+     component: {{ template "fullname" . }}-redis
+  template:
+    metadata:
+      labels:
+        component: {{ template "fullname" . }}-redis
+    spec:
+      containers:
+      - name: redis
+        image: "{{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}"
+        imagePullPolicy: {{ .Values.redis.image.pullPolicy }}
+        resources:
+{{ toYaml .Values.redis.resources | indent 12 }}
+        ports:
+        - containerPort: 6379
+          name: redis
+          protocol: TCP
+      {{- if .Values.common.nodepool }}
+      nodeSelector:
+        cloud.google.com/gke-nodepool: {{ .Values.common.nodepool }}
+      {{- end }}
+{{- end }}

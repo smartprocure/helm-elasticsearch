@@ -200,6 +200,21 @@ logstash:
   beatsPort: 5044
   heapMemory: 4g
 
+redis:
+  # If enabled, beats will use Redis as intermediary
+  enabled: false
+  replicas: 1
+  image:
+    repository: redis
+    tag: 4.0.8
+    pullPolicy: Always
+  resources:
+    limits:
+      cpu: 1000m
+    requests:
+      cpu: 100m
+  port: 6379
+
 beats:
   max_start_delay: 20s
   queue:

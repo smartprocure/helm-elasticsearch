@@ -1,0 +1,20 @@
+{{- if .Values.redis.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "fullname" . }}-redis
+  labels:
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+    component: {{ template "fullname" . }}-redis
+spec:
+  type: {{ .Values.common.serviceType }}
+  ports:
+  - port: {{ .Values.redis.port }}
+    targetPort: 6379
+    protocol: TCP
+  selector:
+    component: {{ template "fullname" . }}-redis
+{{- end }}
