@@ -1,4 +1,5 @@
 {{- $elasticsearchServiceName := printf "%s-%s" .Release.Name "elasticsearch" | trunc 63 -}}
+{{- $logstashServiceName := printf "%s-%s" .Release.Name "elasticsearch-logstash" | trunc 63 -}}
 {{- $kibanaServiceName := printf "%s-%s" .Release.Name "elasticsearch-kibana" | trunc 63 -}}
 apiVersion: v1
 kind: ConfigMap
@@ -37,9 +38,16 @@ data:
     processors:
       - add_cloud_metadata:
 
+    {{- if .Values.logstash.enabled }}
+    output.logstash:
+      hosts: ['{{ $logstashServiceName }}:{{ .Values.logstash.beatsPort }}']
+      bulk_max_size: {{ .Values.beats.output.max_bulk_size }}
+      slow_start: true
+    {{- else }}
     output.elasticsearch:
       hosts: ['http://{{ $elasticsearchServiceName }}:{{ .Values.service.httpPort }}']
       bulk_max_size: {{ .Values.beats.output.max_bulk_size }}
+    {{- end }}
     
     {{- if .Values.kibana.enabled }}      
     setup.kibana.host: "http://{{ $kibanaServiceName }}:{{ .Values.kibana.httpPort }}"

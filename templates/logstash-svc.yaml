@@ -1,0 +1,20 @@
+{{- if .Values.logstash.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "fullname" . }}-logstash
+  labels:
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+    component: {{ template "fullname" . }}-logstash
+spec:
+  type: {{ .Values.common.serviceType }}
+  ports:
+  - port: {{ .Values.logstash.beatsPort }}
+    targetPort: {{ .Values.logstash.beatsPort }}
+    protocol: TCP
+  selector:
+    component: {{ template "fullname" . }}-logstash
+{{- end }}

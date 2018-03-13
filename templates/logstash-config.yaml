@@ -1,0 +1,33 @@
+{{- $elasticsearchServiceName := printf "%s-%s" .Release.Name "elasticsearch" | trunc 63 -}}
+{{- $redisServiceName := printf "%s-%s" .Release.Name "elasticsearch-redis" | trunc 63 -}}
+{{- $kibanaServiceName := printf "%s-%s" .Release.Name "elasticsearch-kibana" | trunc 63 -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "fullname" . }}-logstash-config
+  labels:
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+    kubernetes.io/cluster-service: "true"
+data:
+  beats.conf: |-
+    input {
+      beats {
+        port => {{ .Values.logstash.beatsPort }}
+      }
+    }
+    filter {
+      ruby {
+        init => "require 'time'"
+        code => "event.cancel if Time.now.to_i - event.get('@timestamp').to_i > 60"
+      }
+    }
+    output {
+      elasticsearch {
+        hosts => "http://{{ $elasticsearchServiceName }}:{{ .Values.service.httpPort }}"
+        manage_template => false
+        index => "%{[@metadata][beat]}-%{[@metadata][version]}-%{+YYYY.MM.dd}"
+      }
+    }

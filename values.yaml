@@ -183,6 +183,23 @@ kibana:
       #   hosts:
       #     - kibana.local
 
+logstash:
+  # If enabled, beats will use Logstash as intermediary
+  enabled: true
+  replicas: 3
+  image:
+    repository: docker.elastic.co/logstash/logstash-oss
+    tag: 6.2.2
+    pullPolicy: Always
+  resources:
+    limits:
+      memory: 4Gi
+    requests:
+      cpu: 1000m
+      memory: 4Gi
+  beatsPort: 5044
+  heapMemory: 4g
+
 beats:
   max_start_delay: 20s
   queue:

@@ -1,0 +1,50 @@
+{{- if .Values.logstash.enabled }}
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "fullname" . }}-logstash
+  labels:
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+    component: {{ template "fullname" . }}-logstash
+spec:
+  replicas: {{ .Values.logstash.replicas }}
+  selector:
+    matchLabels:
+     component: {{ template "fullname" . }}-logstash
+  template:
+    metadata:
+      labels:
+        component: {{ template "fullname" . }}-logstash
+    spec:
+      containers:
+      - name: logstash
+        image: "{{ .Values.logstash.image.repository }}:{{ .Values.logstash.image.tag }}"
+        imagePullPolicy: {{ .Values.logstash.image.pullPolicy }}
+        env:
+        - name: LS_JAVA_OPTS
+          value: "-Xms{{ .Values.logstash.heapMemory }} -Xmx{{ .Values.logstash.heapMemory }}"
+        securityContext:
+          runAsUser: 0
+        resources:
+{{ toYaml .Values.logstash.resources | indent 12 }}
+        ports:
+        - containerPort: {{ .Values.logstash.beatsPort }}
+          name: beats
+          protocol: TCP
+        volumeMounts:
+        - name: config
+          mountPath: /usr/share/logstash/pipeline
+          readOnly: true
+      volumes:
+      - name: config
+        configMap:
+          defaultMode: 0600
+          name: {{ template "fullname" . }}-logstash-config
+      {{- if .Values.common.nodepool }}
+      nodeSelector:
+        cloud.google.com/gke-nodepool: {{ .Values.common.nodepool }}
+      {{- end }}
+{{- end }}
