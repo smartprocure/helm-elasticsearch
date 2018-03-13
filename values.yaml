@@ -184,6 +184,7 @@ kibana:
       #     - kibana.local
 
 beats:
+  max_start_delay: 20s
   queue:
     events: 4096
     min_events: 512

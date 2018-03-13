@@ -1,4 +1,3 @@
-{{- if .Values.filebeat.enabled }}
 {{- $elasticsearchServiceName := printf "%s-%s" .Release.Name "elasticsearch" | trunc 63 -}}
 {{- $kibanaServiceName := printf "%s-%s" .Release.Name "elasticsearch-kibana" | trunc 63 -}}
 apiVersion: v1
@@ -17,6 +16,8 @@ data:
     fields:
       nodePool: ${POOL_NAME}
     
+    max_start_delay: {{ .Values.beats.max_start_delay }}
+
     queue.mem:
       events: {{ .Values.beats.queue.events }}
       flush:
@@ -31,6 +32,8 @@ data:
           - add_kubernetes_metadata:
               in_cluster: true
 
+    logging.metrics.enabled: false
+
     processors:
       - add_cloud_metadata:
 
@@ -42,4 +45,3 @@ data:
     setup.kibana.host: "http://{{ $kibanaServiceName }}:{{ .Values.kibana.httpPort }}"
     setup.dashboards.enabled: {{ .Values.filebeat.setupDashboards }}
     {{- end }}
-{{- end }}

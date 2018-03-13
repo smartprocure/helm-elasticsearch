@@ -1,4 +1,3 @@
-{{- if .Values.metricbeat.enabled }}
 {{- $elasticsearchServiceName := printf "%s-%s" .Release.Name "elasticsearch" | trunc 63 -}}
 {{- $kibanaServiceName := printf "%s-%s" .Release.Name "elasticsearch-kibana" | trunc 63 -}}
 apiVersion: v1
@@ -16,6 +15,8 @@ data:
     name: ${NODE_NAME}
     fields:
       nodePool: ${POOL_NAME}
+
+    max_start_delay: {{ .Values.beats.max_start_delay }}
 
     queue.mem:
       events: {{ .Values.beats.queue.events }}
@@ -155,6 +156,8 @@ data:
                   username: guest
                   password: guest
 
+    logging.metrics.enabled: false
+
     processors:
       - add_cloud_metadata:
 
@@ -166,4 +169,3 @@ data:
     setup.kibana.host: "http://{{ $kibanaServiceName }}:{{ .Values.kibana.httpPort }}"
     setup.dashboards.enabled: {{ .Values.metricbeat.setupDashboards }}
     {{- end }}
-{{- end }}
