@@ -35,4 +35,5 @@ data:
     {{- if .Values.kibana.enabled }}      
     setup.kibana.host: "http://{{ $kibanaServiceName }}:{{ .Values.kibana.httpPort }}"
     setup.dashboards.enabled: {{ .Values.apmserver.setupDashboards }}
+    setup.template.enabled: {{ .Values.apmserver.setupTemplates }}
     {{- end }}

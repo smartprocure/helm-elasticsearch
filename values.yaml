@@ -238,6 +238,7 @@ apmserver:
       cpu: 100m
   port: 8200
   setupDashboards: true
+  setupTemplates: true
 
 metricbeat:
   enabled: true
