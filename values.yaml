@@ -145,7 +145,7 @@ curator:
   age:
     timestring: "%Y.%m.%d"
     unit: "days"
-    unit_count: 3
+    unit_count: 30
 
 service:
   httpPort: 9200
