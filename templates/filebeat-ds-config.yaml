@@ -43,7 +43,7 @@ data:
     logging.metrics.enabled: false
 
     processors:
-      - add_cloud_metadata:
+      - add_cloud_metadata: ~
 
     {{- if .Values.logstash.enabled }}
     output.logstash:
