@@ -45,6 +45,7 @@ data:
           by_memory: 5   # include top 5 processes by memory
 
       - module: system
+        enabled: false
         period: 1m
         metricsets:
           - filesystem
