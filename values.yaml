@@ -2,7 +2,7 @@ image:
   es:
     repository: quay.io/pires/docker-elasticsearch-kubernetes
     tag: 6.2.2
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
   init:
     repository: busybox
     tag: latest
@@ -157,7 +157,7 @@ kibana:
   image:
     repository: docker.elastic.co/kibana/kibana-oss
     tag: 6.2.2
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
   httpPort: 80
   resources:
     limits:
@@ -190,7 +190,7 @@ logstash:
   image:
     repository: docker.elastic.co/logstash/logstash-oss
     tag: 6.2.2
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
   resources:
     limits:
       memory: 4Gi
@@ -207,7 +207,7 @@ redis:
   image:
     repository: redis
     tag: 4.0.8
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
   resources:
     limits:
       cpu: 1000m
@@ -230,7 +230,7 @@ apmserver:
   image:
     repository: docker.elastic.co/apm/apm-server
     tag: 6.2.2
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
   resources:
     limits:
       cpu: 1000m
@@ -245,7 +245,7 @@ metricbeat:
   image:
     repository: docker.elastic.co/beats/metricbeat
     tag: 6.2.2
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
   resources:
     limits:
       memory: 200Mi
@@ -259,7 +259,7 @@ filebeat:
   image:
     repository: docker.elastic.co/beats/filebeat
     tag: 6.2.2
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
   resources:
     limits:
       memory: 200Mi
@@ -273,7 +273,7 @@ packetbeat:
   image:
     repository: docker.elastic.co/beats/packetbeat
     tag: 6.2.2
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
   resources:
     limits:
       memory: 200Mi
