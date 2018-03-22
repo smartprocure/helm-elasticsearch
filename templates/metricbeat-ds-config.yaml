@@ -77,7 +77,7 @@ data:
                     - node
                     - node_stats
                   period: 10s
-                  hosts: "${data.host}:9200"
+                  hosts: ["${data.host}:9200"]
             - condition:
                 contains:
                   kubernetes.container.image: us.gcr.io/evident-plane-94217/elasticsearch
@@ -87,7 +87,7 @@ data:
                     - node
                     - node_stats
                   period: 10s
-                  hosts: "${data.host}:9200"
+                  hosts: ["${data.host}:9200"]
             - condition:
                 contains:
                   kubernetes.container.image: quay.io/pires/docker-elasticsearch-kubernetes
@@ -97,7 +97,7 @@ data:
                     - node
                     - node_stats
                   period: 10s
-                  hosts: "${data.host}:9200"
+                  hosts: ["${data.host}:9200"]
 
             - condition:
                 contains:
@@ -109,7 +109,7 @@ data:
                     - dbstats
                     - status
                   period: 10s
-                  hosts: "${data.host}:27017"
+                  hosts: ["${data.host}:27017"]
 
             - condition:
                 contains:
@@ -119,7 +119,7 @@ data:
                   metricsets: 
                     - status
                   period: 10s
-                  hosts: "tcp(${data.host}:3306)/"
+                  hosts: ["tcp(${data.host}:3306)/"]
                   username: root
                   password: 6kCGBg4TdUQH3ng2
 
@@ -144,7 +144,7 @@ data:
                     - info
                     - keyspace
                   period: 10s
-                  hosts: "${data.host}:6379"
+                  hosts: ["${data.host}:6379"]
 
             - condition:
                 contains:
@@ -155,7 +155,7 @@ data:
                     - node
                     - queue
                   period: 10s
-                  hosts: "${data.host}:6379"
+                  hosts: ["${data.host}:6379"]
                   username: guest
                   password: guest
 
@@ -163,6 +163,8 @@ data:
 
     processors:
       - add_cloud_metadata: ~
+      - add_kubernetes_metadata:
+          in_cluster: true
 
     {{- if .Values.logstash.enabled }}
     output.logstash:
