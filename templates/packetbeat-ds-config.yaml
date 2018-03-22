@@ -32,12 +32,58 @@ data:
       device: any
       type: af_packet
       buffer_size_mb: 100
-      with_vlans: true
+      # with_vlans: true
+
+    packetbeat.protocols:
+    - type: icmp
+      enabled: false
+    - type: dns
+      enabled: false
+      ports: [53]
+    - type: http
+      enabled: true
+      ports: [80, 8080, 8000, 1337, 9200]
+      hide_keywords: ['pass', 'password', 'passwd', 'pw', 'token', 'access_token', 'accesstoken']
+      include_body_for: ['application/json']
+      real_ip_header: 'X-Forwarded-For'
+      send_headers: ["User-Agent", "Cookie", "Set-Cookie", "sp-search-correlation-id", "sp-user-email", "sp-customer-name", "sp-version", "sp-app-name", "sp-environment"]
+      send_request: true
+      send_response: true
+      max_message_size: 1024
+    - type: amqp
+      enabled: true
+      ports: [5672]
+      send_request: true
+      send_response: true
+    - type: mysql
+      enabled: true
+      ports: [3306]
+      send_request: true
+      send_response: true
+    - type: mongodb
+      enabled: true
+      ports: [27017]
+      send_request: true
+      send_response: true
+      max_docs: 10
+    - type: redis
+      enabled: true
+      ports: [6379]
+      send_request: true
+      send_response: true
 
     logging.metrics.enabled: false
 
     processors:
-      - add_cloud_metadata:
+      - drop_event:
+          when:
+            equals:
+              direction: out
+      - drop_event:
+          when:
+            equals:
+              ip: "169.254.169.254"
+      - add_cloud_metadata: ~
 
     {{- if .Values.logstash.enabled }}
     output.logstash:
