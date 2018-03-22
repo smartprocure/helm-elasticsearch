@@ -30,6 +30,9 @@ data:
       - type: docker
         ignore_older: 10m
         scan_frequency: 30s
+        multiline.pattern: '^[[:space:]]'
+        multiline.negate: false
+        multiline.match: after
         # tail_files: true
         containers.ids:
         - "*"
