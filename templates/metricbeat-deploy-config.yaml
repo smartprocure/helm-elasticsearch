@@ -33,7 +33,7 @@ data:
           - state_pod
           - state_container
           # Uncomment this to get k8s events:
-          #- event
+          - event
         period: 30s
         hosts: ["kube-state-metrics.kube-system.svc.cluster.local:8080"]
 
