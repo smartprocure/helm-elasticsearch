@@ -28,6 +28,9 @@ data:
 
     filebeat.prospectors:
       - type: docker
+        ignore_older: 10m
+        scan_frequency: 30s
+        # tail_files: true
         containers.ids:
         - "*"
         processors:
