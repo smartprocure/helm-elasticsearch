@@ -28,7 +28,7 @@ spec:
         - /bin/sh
         - -c
         - export POOL_NAME=$(echo $NODE_NAME | sed "s/^gke-main-\(.*\)-.*-.*$/\1/")
-          && /usr/share/packetbeat/packetbeat -e -c /etc/packetbeat.yml -system.hostfs=/hostfs
+          && /usr/share/packetbeat/packetbeat -e -c /etc/packetbeat.yml
         env:
         - name: POD_NAMESPACE
           valueFrom:
