@@ -216,7 +216,7 @@ redis:
   port: 6379
 
 beats:
-  max_start_delay: 20s
+  max_start_delay: 60s
   queue:
     events: 4096
     min_events: 1024
