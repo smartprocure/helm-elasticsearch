@@ -31,7 +31,7 @@ data:
     packetbeat.interfaces:
       device: any
       type: af_packet
-      buffer_size_mb: 100
+      buffer_size_mb: 50
       # with_vlans: true
 
     packetbeat.protocols:
