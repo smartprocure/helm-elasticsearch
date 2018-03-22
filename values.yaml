@@ -136,7 +136,7 @@ master:
     size: 50Gi
 
 curator:
-  enabled: true
+  enabled: false
   schedule: "0 1 * * *"
 
   # Allows modification of the default age-based filter. If you require more
