@@ -21,7 +21,7 @@ data:
     filter {
       ruby {
         init => "require 'time'"
-        code => "event.cancel if Time.now.to_i - event.get('@timestamp').to_i > 60"
+        code => "event.cancel if Time.now.to_i - event.get('@timestamp').to_i > 600"
       }
     }
     output {
