@@ -51,7 +51,7 @@ data:
       send_response: true
       max_message_size: 1024
     - type: amqp
-      enabled: true
+      enabled: false
       ports: [5672]
       send_request: true
       send_response: true
