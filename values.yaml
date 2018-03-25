@@ -136,7 +136,7 @@ master:
     size: 50Gi
 
 curator:
-  enabled: false
+  enabled: true
   schedule: "0 1 * * *"
 
   # The number of successful and failed jobs to keep around.
@@ -150,7 +150,7 @@ curator:
   age:
     timestring: "%Y.%m.%d"
     unit: "days"
-    unit_count: 30
+    unit_count: 14
   pattern:
     value: "^filebeat-|^metricbeat-|^packetbeat-"
 
