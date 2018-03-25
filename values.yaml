@@ -151,6 +151,8 @@ curator:
     timestring: "%Y.%m.%d"
     unit: "days"
     unit_count: 30
+  pattern:
+    value: "^filebeat-|^metricbeat-|^packetbeat-"
 
 service:
   httpPort: 9200
