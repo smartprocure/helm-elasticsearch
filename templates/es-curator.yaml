@@ -10,11 +10,11 @@ metadata:
     heritage: "{{ .Release.Service }}"
 spec:
   schedule: {{ .Values.curator.schedule }}
+  successfulJobsHistoryLimit: {{ .Values.curator.history.success }}
+  failedJobsHistoryLimit: {{ .Values.curator.history.failure }}
   jobTemplate:
     spec:
       concurrencyPolicy: Forbid
-      successfulJobsHistoryLimit: 0
-      failedJobsHistoryLimit: 0
       template:
         spec:
           containers:

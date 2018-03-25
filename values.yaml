@@ -139,6 +139,11 @@ curator:
   enabled: false
   schedule: "0 1 * * *"
 
+  # The number of successful and failed jobs to keep around.
+  history:
+    success: 0
+    failure: 0
+
   # Allows modification of the default age-based filter. If you require more
   # sophisticated filtering, modify the action file specified in
   # templates/es-curator-config.yaml.
