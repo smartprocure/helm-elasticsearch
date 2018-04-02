@@ -34,7 +34,7 @@ spec:
         - /bin/sh
         - -c
         - export POOL_NAME=$(echo $NODE_NAME | sed "s/^gke-main-\(.*\)-.*-.*$/\1/")
-          && /usr/share/packetbeat/packetbeat -e -c /etc/packetbeat.yml
+          && /usr/share/packetbeat/packetbeat -e -c /etc/packetbeat/packetbeat.yml
         env:
         - name: POD_NAMESPACE
           valueFrom:
@@ -53,14 +53,16 @@ spec:
 {{ toYaml .Values.packetbeat.resources | indent 10 }}
         volumeMounts:
         - name: config
-          mountPath: /etc/packetbeat.yml
+          mountPath: /etc/packetbeat
           readOnly: true
-          subPath: packetbeat.yml
       volumes:
       - name: config
         configMap:
           defaultMode: 0600
           name: {{ template "fullname" . }}-packetbeat-daemonset-config
+          items:
+          - key: packetbeat-config
+            path: packetbeat.yml
       - name: data
         emptyDir: {}
 {{- end }}

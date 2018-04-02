@@ -13,7 +13,7 @@ metadata:
     heritage: "{{ .Release.Service }}"
     kubernetes.io/cluster-service: "true"
 data:
-  metricbeat.yml: |-
+  metricbeat-config: |-
     name: ${NODE_NAME}
     fields:
       nodePool: ${POOL_NAME}

@@ -28,7 +28,7 @@ spec:
         image: "{{ .Values.metricbeat.image.repository }}:{{ .Values.metricbeat.image.tag }}"
         imagePullPolicy: {{ .Values.metricbeat.image.pullPolicy }}
         args: [
-          "-c", "/etc/metricbeat.yml",
+          "-c", "/etc/metricbeat/metricbeat.yml",
           "-e",
         ]
         env:
@@ -46,14 +46,15 @@ spec:
 {{ toYaml .Values.metricbeat.resources | indent 10 }}
         volumeMounts:
         - name: config
-          mountPath: /etc/metricbeat.yml
-          readOnly: true
-          subPath: metricbeat.yml
+          mountPath: /etc/metricbeat
       volumes:
       - name: config
         configMap:
           defaultMode: 0600
           name: {{ template "fullname" . }}-metricbeat-deployment-config
+          items:
+          - key: metricbeat-config
+            path: metricbeat.yml
       {{- if .Values.common.nodepool }}
       nodeSelector:
         cloud.google.com/gke-nodepool: {{ .Values.common.nodepool }}

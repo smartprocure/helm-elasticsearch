@@ -34,7 +34,7 @@ spec:
         - /bin/sh
         - -c
         - export POOL_NAME=$(echo $NODE_NAME | sed "s/^gke-main-\(.*\)-.*-.*$/\1/")
-          && /usr/share/metricbeat/metricbeat -e -c /etc/metricbeat.yml -system.hostfs=/hostfs
+          && /usr/share/metricbeat/metricbeat -e -c /etc/metricbeat/metricbeat.yml -system.hostfs=/hostfs
         env:
         - name: POD_NAMESPACE
           valueFrom:
@@ -50,9 +50,7 @@ spec:
 {{ toYaml .Values.metricbeat.resources | indent 10 }}
         volumeMounts:
         - name: config
-          mountPath: /etc/metricbeat.yml
-          readOnly: true
-          subPath: metricbeat.yml
+          mountPath: /etc/metricbeat
         - name: dockersock
           mountPath: /var/run/docker.sock
         - name: proc
@@ -75,6 +73,9 @@ spec:
         configMap:
           defaultMode: 0600
           name: {{ template "fullname" . }}-metricbeat-daemonset-config
+          items:
+          - key: metricbeat-config
+            path: metricbeat.yml
       - name: data
         emptyDir: {}
 {{- end }}
