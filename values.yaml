@@ -150,7 +150,7 @@ curator:
   age:
     timestring: "%Y.%m.%d"
     unit: "days"
-    unit_count: 14
+    unit_count: 7
   pattern:
     value: "^filebeat-|^metricbeat-|^packetbeat-"
 
