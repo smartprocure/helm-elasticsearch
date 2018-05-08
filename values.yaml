@@ -204,6 +204,7 @@ logstash:
     requests:
       cpu: 1000m
       memory: 4Gi
+  httpPort: 80
   beatsPort: 5044
   heapMemory: 4g
 

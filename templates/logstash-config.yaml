@@ -16,18 +16,42 @@ data:
     input {
       beats {
         port => {{ .Values.logstash.beatsPort }}
+        tags => 'beats'
+      }
+
+      http {
+        type => 'http.in'
+        port => '80'
+        codec => 'json'
+        tags => 'http.in'
       }
     }
     filter {
-      ruby {
-        init => "require 'time'"
-        code => "event.cancel if Time.now.to_i - event.get('@timestamp').to_i > 600"
+      if 'beats' in [tags] {
+        ruby {
+          init => "require 'time'"
+          code => "event.cancel if Time.now.to_i - event.get('@timestamp').to_i > 600"
+        }
       }
     }
     output {
-      elasticsearch {
-        hosts => "http://{{ $elasticsearchServiceName }}:{{ .Values.service.httpPort }}"
-        manage_template => false
-        index => "%{[@metadata][beat]}-%{[@metadata][version]}-%{+YYYY.MM.dd}"
+      if 'beats' in [tags] {
+        elasticsearch {
+          hosts => "http://{{ $elasticsearchServiceName }}:{{ .Values.service.httpPort }}"
+          manage_template => false
+          index => "%{[@metadata][beat]}-%{[@metadata][version]}-%{+YYYY.MM.dd}"
+        }
+      } else if [index] {
+        elasticsearch {
+          hosts => "http://{{ $elasticsearchServiceName }}:{{ .Values.service.httpPort }}"
+          manage_template => true
+          index => "logstash-%{[index]}-%{+YYYY.MM.dd}"
+        }
+      } else {
+        elasticsearch {
+          hosts => "http://{{ $elasticsearchServiceName }}:{{ .Values.service.httpPort }}"
+          manage_template => true
+          index => "logstash-unknown-%{+YYYY.MM.dd}"
+        }
       }
     }

@@ -12,8 +12,13 @@ metadata:
 spec:
   type: {{ .Values.common.serviceType }}
   ports:
-  - port: {{ .Values.logstash.beatsPort }}
+  - name: beats
+    port: {{ .Values.logstash.beatsPort }}
     targetPort: {{ .Values.logstash.beatsPort }}
+    protocol: TCP
+  - name: http
+    port: {{ .Values.logstash.httpPort }}
+    targetPort: {{ .Values.logstash.httpPort }}
     protocol: TCP
   selector:
     component: {{ template "fullname" . }}-logstash
