@@ -32,6 +32,16 @@ data:
           init => "require 'time'"
           code => "event.cancel if Time.now.to_i - event.get('@timestamp').to_i > 600"
         }
+        if [type] == "http" {
+          json {
+            source => "[http][response][body]"
+            target => "[@metadata][elasticsearch_response]"
+            skip_on_invalid_json => true
+          }
+          mutate {
+            copy => { "[@metadata][elasticsearch_response][took]" => "[http][response][fields][took]" }
+          }
+        }
       }
     }
     output {

@@ -65,4 +65,6 @@ spec:
             path: packetbeat.yml
       - name: data
         emptyDir: {}
+      nodeSelector:
+        cloud.google.com/gke-nodepool: production-elastic-clients
 {{- end }}

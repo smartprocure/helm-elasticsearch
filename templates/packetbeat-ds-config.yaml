@@ -31,7 +31,7 @@ data:
     packetbeat.interfaces:
       device: any
       type: af_packet
-      buffer_size_mb: 50
+      buffer_size_mb: 200
       # with_vlans: true
 
     packetbeat.protocols:
@@ -56,18 +56,18 @@ data:
       send_request: true
       send_response: true
     - type: mysql
-      enabled: true
+      enabled: false
       ports: [3306]
       send_request: true
       send_response: true
     - type: mongodb
-      enabled: true
+      enabled: false
       ports: [27017]
       send_request: true
       send_response: true
       max_docs: 10
     - type: redis
-      enabled: true
+      enabled: false
       ports: [6379]
       send_request: true
       send_response: true

@@ -277,7 +277,7 @@ filebeat:
   setupDashboards: true
 
 packetbeat:
-  enabled: false
+  enabled: true
   image:
     repository: docker.elastic.co/beats/packetbeat
     tag: 6.2.3
