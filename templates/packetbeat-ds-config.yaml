@@ -46,7 +46,8 @@ data:
       hide_keywords: ['pass', 'password', 'passwd', 'pw', 'token', 'access_token', 'accesstoken']
       include_body_for: ['application/json']
       real_ip_header: 'X-Forwarded-For'
-      send_headers: ["User-Agent", "Cookie", "Set-Cookie", "sp-search-correlation-id", "sp-user-email", "sp-customer-name", "sp-version", "sp-app-name", "sp-environment"]
+      # send_headers: ["User-Agent", "Cookie", "Set-Cookie", "sp-search-correlation-id", "sp-user-email", "sp-customer-name", "sp-version", "sp-app-name", "sp-environment"]
+      send_all_headers: true
       send_request: true
       send_response: true
       max_message_size: 1024
