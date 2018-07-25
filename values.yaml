@@ -20,6 +20,7 @@ common:
 
   env:
     CLUSTER_NAME: "esmonitoring"
+    ES_PLUGINS_INSTALL: "repository-gcs"
 
     # Uncomment this if you get the "No up-and-running site-local (private)
     # addresses" error.
