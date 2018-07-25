@@ -33,6 +33,21 @@ data:
           code => "event.cancel if Time.now.to_i - event.get('@timestamp').to_i > 600"
         }
         if [type] == "http" {
+          #if [http][response][headers][content-encoding] == "gzip" {
+          #  ruby {
+          #    init => "
+          #     require 'zlib'
+          #      require 'stringio'
+          #    "
+          #    code => "
+          #      body = event.get('[http][response][body]').to_s
+          #      sio = StringIO.new(body)
+          #      gz = Zlib::GzipReader.new(sio)
+          #      result = gz.read.to_s
+          #      event.set('[http][response][body]', result)
+          #    "
+          #  }
+          #}
           json {
             source => "[http][response][body]"
             target => "[@metadata][elasticsearch_response]"
