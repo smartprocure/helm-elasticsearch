@@ -80,6 +80,16 @@ data:
                   hosts: ["${data.host}:9200"]
             - condition:
                 contains:
+                  kubernetes.container.image: us.gcr.io/evident-plane-94217/pires-docker-elasticsearch-kubernetes
+              config:
+                - module: elasticsearch
+                  metricsets:
+                    - node
+                    - node_stats
+                  period: 10s
+                  hosts: ["${data.host}:9200"]
+            - condition:
+                contains:
                   kubernetes.container.image: us.gcr.io/evident-plane-94217/elasticsearch
               config:
                 - module: elasticsearch

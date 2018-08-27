@@ -66,5 +66,5 @@ spec:
       - name: data
         emptyDir: {}
       nodeSelector:
-        cloud.google.com/gke-nodepool: production-elastic-clients
+        cloud.google.com/gke-nodepool: production-elastic-clients-2
 {{- end }}

@@ -1,7 +1,7 @@
 image:
   es:
     repository: quay.io/pires/docker-elasticsearch-kubernetes
-    tag: 6.2.2
+    tag: 6.3.2
     pullPolicy: IfNotPresent
   init:
     repository: busybox
@@ -164,7 +164,7 @@ kibana:
   replicas: 1
   image:
     repository: docker.elastic.co/kibana/kibana-oss
-    tag: 6.2.3
+    tag: 6.3.2
     pullPolicy: IfNotPresent
   httpPort: 80
   resources:
@@ -197,7 +197,7 @@ logstash:
   replicas: 3
   image:
     repository: docker.elastic.co/logstash/logstash-oss
-    tag: 6.2.3
+    tag: 6.3.2
     pullPolicy: IfNotPresent
   resources:
     limits:
@@ -238,7 +238,7 @@ apmserver:
   replicas: 1
   image:
     repository: docker.elastic.co/apm/apm-server
-    tag: 6.2.3
+    tag: 6.3.2
     pullPolicy: IfNotPresent
   resources:
     limits:
@@ -253,7 +253,7 @@ metricbeat:
   enabled: true
   image:
     repository: docker.elastic.co/beats/metricbeat
-    tag: 6.2.3
+    tag: 6.3.2
     pullPolicy: IfNotPresent
   resources:
     limits:
@@ -267,7 +267,7 @@ filebeat:
   enabled: true
   image:
     repository: docker.elastic.co/beats/filebeat
-    tag: 6.2.3
+    tag: 6.3.2
     pullPolicy: IfNotPresent
   resources:
     limits:
@@ -281,7 +281,7 @@ packetbeat:
   enabled: true
   image:
     repository: docker.elastic.co/beats/packetbeat
-    tag: 6.2.3
+    tag: 6.3.2
     pullPolicy: IfNotPresent
   resources:
     limits:
