@@ -1,0 +1,107 @@
+{{- $elasticsearchServiceName := printf "%s-%s" .Release.Name "elasticsearch" | trunc 63 -}}
+{{- $logstashServiceName := printf "%s-%s" .Release.Name "elasticsearch-logstash" | trunc 63 -}}
+{{- $redisServiceName := printf "%s-%s" .Release.Name "elasticsearch-redis" | trunc 63 -}}
+{{- $kibanaServiceName := printf "%s-%s" .Release.Name "elasticsearch-kibana" | trunc 63 -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "fullname" . }}-packetbeat-mongo-config
+  labels:
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+    kubernetes.io/cluster-service: "true"
+data:
+  packetbeat-config: |-
+    name: ${NODE_NAME}
+    fields:
+      nodePool: ${POOL_NAME}
+
+    max_start_delay: {{ .Values.beats.max_start_delay }}
+
+    queue.mem:
+      events: {{ .Values.beats.queue.events }}
+      flush:
+        min_events: {{ .Values.beats.queue.min_events }}
+        timeout: {{ .Values.beats.queue.timeout }}
+
+    packetbeat.ignore_outgoing: true
+
+    packetbeat.interfaces:
+      device: any
+      type: af_packet
+      buffer_size_mb: 200
+      # with_vlans: true
+
+    packetbeat.protocols:
+    - type: icmp
+      enabled: false
+    - type: dns
+      enabled: false
+      ports: [53]
+    - type: http
+      enabled: false
+      ports: [9200]
+      hide_keywords: ['pass', 'password', 'passwd', 'pw', 'token', 'access_token', 'accesstoken']
+      include_body_for: ['application/json']
+      real_ip_header: 'X-Forwarded-For'
+      # send_headers: ["User-Agent", "Cookie", "Set-Cookie", "sp-search-correlation-id", "sp-user-email", "sp-customer-name", "sp-version", "sp-app-name", "sp-environment"]
+      send_all_headers: true
+      send_request: true
+      send_response: true
+      max_message_size: 1024
+    - type: amqp
+      enabled: false
+      ports: [5672]
+      send_request: true
+      send_response: true
+    - type: mysql
+      enabled: false
+      ports: [3306]
+      send_request: true
+      send_response: true
+    - type: mongodb
+      enabled: true
+      ports: [27017]
+      send_request: true
+      send_response: true
+      max_docs: 10
+    - type: redis
+      enabled: false
+      ports: [6379]
+      send_request: true
+      send_response: true
+
+    logging.metrics.enabled: false
+
+    processors:
+      - drop_event:
+          when:
+            equals:
+              direction: out
+      - drop_event:
+          when:
+            equals:
+              ip: "169.254.169.254"
+      - add_cloud_metadata: ~
+
+    {{- if .Values.logstash.enabled }}
+    output.logstash:
+      hosts: ['{{ $logstashServiceName }}:{{ .Values.logstash.beatsPort }}']
+      bulk_max_size: {{ .Values.beats.output.max_bulk_size }}
+      slow_start: true
+    {{- else if .Values.redis.enabled }}
+    output.redis:
+      hosts: ['{{ $redisServiceName }}:{{ .Values.redis.port }}']
+      bulk_max_size: {{ .Values.beats.output.max_bulk_size }}
+    {{- else }}
+    output.elasticsearch:
+      hosts: ['http://{{ $elasticsearchServiceName }}:{{ .Values.service.httpPort }}']
+      bulk_max_size: {{ .Values.beats.output.max_bulk_size }}
+    {{- end }}
+    
+    {{- if .Values.kibana.enabled }}      
+    setup.kibana.host: "http://{{ $kibanaServiceName }}:{{ .Values.kibana.httpPort }}"
+    setup.dashboards.enabled: {{ .Values.packetbeat.setupDashboards }}
+    {{- end }}

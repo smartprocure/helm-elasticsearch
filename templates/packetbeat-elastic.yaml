@@ -2,13 +2,13 @@
 apiVersion: extensions/v1beta1
 kind: DaemonSet
 metadata:
-  name: {{ template "fullname" . }}-packetbeat
+  name: {{ template "fullname" . }}-packetbeat-elastic
   labels:
     app: {{ template "fullname" . }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
-    component: {{ template "fullname" . }}-packetbeat
+    component: {{ template "fullname" . }}-packetbeat-elastic
     kubernetes.io/cluster-service: "true"
 spec:
   updateStrategy:
@@ -20,7 +20,7 @@ spec:
         chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
         release: "{{ .Release.Name }}"
         heritage: "{{ .Release.Service }}"
-        component: {{ template "fullname" . }}-packetbeat
+        component: {{ template "fullname" . }}-packetbeat-elastic
         kubernetes.io/cluster-service: "true"
     spec:
       terminationGracePeriodSeconds: 30
@@ -59,7 +59,7 @@ spec:
       - name: config
         configMap:
           defaultMode: 0600
-          name: {{ template "fullname" . }}-packetbeat-daemonset-config
+          name: {{ template "fullname" . }}-packetbeat-elastic-config
           items:
           - key: packetbeat-config
             path: packetbeat.yml

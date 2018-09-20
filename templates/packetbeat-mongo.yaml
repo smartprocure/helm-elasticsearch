@@ -1,0 +1,70 @@
+{{- if .Values.packetbeat.enabled }}
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: {{ template "fullname" . }}-packetbeat-mongo
+  labels:
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+    component: {{ template "fullname" . }}-packetbeat-mongo
+    kubernetes.io/cluster-service: "true"
+spec:
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ template "fullname" . }}
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        release: "{{ .Release.Name }}"
+        heritage: "{{ .Release.Service }}"
+        component: {{ template "fullname" . }}-packetbeat-mongo
+        kubernetes.io/cluster-service: "true"
+    spec:
+      terminationGracePeriodSeconds: 30
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+      - name: packetbeat
+        image: "{{ .Values.packetbeat.image.repository }}:{{ .Values.packetbeat.image.tag }}"
+        imagePullPolicy: {{ .Values.packetbeat.image.pullPolicy }}
+        command:
+        - /bin/sh
+        - -c
+        - export POOL_NAME=$(echo $NODE_NAME | sed "s/^gke-main-\(.*\)-.*-.*$/\1/")
+          && /usr/share/packetbeat/packetbeat -e -c /etc/packetbeat/packetbeat.yml
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        securityContext:
+          runAsUser: 0
+          capabilities:
+            add:
+            - NET_ADMIN
+        resources:
+{{ toYaml .Values.packetbeat.resources | indent 10 }}
+        volumeMounts:
+        - name: config
+          mountPath: /etc/packetbeat
+          readOnly: true
+      volumes:
+      - name: config
+        configMap:
+          defaultMode: 0600
+          name: {{ template "fullname" . }}-packetbeat-mongo-config
+          items:
+          - key: packetbeat-config
+            path: packetbeat.yml
+      - name: data
+        emptyDir: {}
+      nodeSelector:
+        cloud.google.com/gke-nodepool: production-front-dbs
+{{- end }}
